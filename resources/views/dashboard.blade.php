@@ -30,7 +30,7 @@
                 <tbody>
                     @foreach ($parts as $part)
                     <tr>
-                        <th scope="row">{{ $part->id }}</th>
+                        <th scope="row">{{ $part->identifier }}</th>
                         <td>{{ $part->description }}</td>
                         <td>{{ $part->brand }}</td>
                         <td>{{ $part->color }}</td>
