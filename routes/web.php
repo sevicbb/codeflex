@@ -14,3 +14,4 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::get('/', 'App\Http\Controllers\PartController@index')->name('part.index');
+Route::post('/update-tax', 'App\Http\Controllers\PartController@updateTax')->name('part.update_tax');
