@@ -4,6 +4,7 @@ namespace App\Providers;
 
 use App\Constants\TaxConstants;
 use App\Models\Setting;
+use Illuminate\Database\Query\Builder;
 use Illuminate\Pagination\Paginator;
 use Illuminate\Support\ServiceProvider;
 
@@ -28,7 +29,22 @@ class AppServiceProvider extends ServiceProvider
     {
         Paginator::useBootstrap();
 
+        $this->defineMacros();
+
         $this->applyDefaultSettings();
+    }
+
+    private function defineMacros()
+    {
+        Builder::macro('whereLike', function ($columns, $search) {
+            $this->where(function ($query) use ($columns, $search) {
+                foreach ($columns as $column) {
+                    $query->orWhere($column, 'LIKE', "%{$search}%");
+                }
+            });
+
+            return $this;
+        });
     }
 
     private function applyDefaultSettings()
