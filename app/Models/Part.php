@@ -8,7 +8,7 @@ class Part extends Model
 {
     public function getPriceWithTaxAttribute()
     {
-        $taxAmount = $this->price * config('tax.value') / 100;
+        $taxAmount = $this->price * Setting::get('tax.value') / 100;
 
         return $this->price + round($taxAmount, 2);
     }
