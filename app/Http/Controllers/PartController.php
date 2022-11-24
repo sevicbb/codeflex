@@ -2,9 +2,12 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\UpdateInventoryRequest;
 use App\Http\Requests\UpdateTaxRequest;
+use App\Http\Requests\UpdateWarehouseRequest;
 use App\Models\Part;
 use App\Models\Setting;
+use App\PivotModels\WarehousePart;
 use Illuminate\Http\Request;
 
 class PartController extends Controller
@@ -33,6 +36,31 @@ class PartController extends Controller
         $data = $request->validated();
 
         Setting::set('tax.value', $data['tax']);
+
+        return redirect()->route('part.index');
+    }
+
+    public function updateWarehouse(UpdateWarehouseRequest $request)
+    {
+        $data = $request->validated();
+
+        Setting::set('warehouse.id', $data['warehouse']);
+
+        return redirect()->route('part.index');
+    }
+
+    public function updateInventory(UpdateInventoryRequest $request)
+    {
+        $data = $request->all();
+
+        WarehousePart::where(
+            [
+                'part_id' => $data['part_id'],
+                'warehouse_id' => $data['warehouse_id']
+            ]
+        )->update(
+            ['inventory' => $data['inventory']]
+        );
 
         return redirect()->route('part.index');
     }

@@ -15,3 +15,5 @@ use Illuminate\Support\Facades\Route;
 
 Route::get('/', 'App\Http\Controllers\PartController@index')->name('part.index');
 Route::post('/update-tax', 'App\Http\Controllers\PartController@updateTax')->name('part.update_tax');
+Route::post('/update-warehouse', 'App\Http\Controllers\PartController@updateWarehouse')->name('part.update_warehouse');
+Route::post('/update-inventory', 'App\Http\Controllers\PartController@updateInventory')->name('part.update_inventory');

@@ -13,6 +13,14 @@
         .c-sortable-column {
             color: white;
         }
+
+        .c-sortable-column:disabled {
+            color: white;
+        }
+
+        .c-zero-inventory {
+            color: red;
+        }
     </style>
 </head>
 
@@ -20,7 +28,11 @@
     <div class="container mt-5 mb-5">
 
         @include('tax')
-        @include('search')
+
+        <div class="row">
+            <div class="col-sm"> @include('search') </div>
+            <div class="col-sm"> @include('warehouses') </div>
+        </div>
 
         <div class="container">
             <table class="table table-bordered">
@@ -32,6 +44,7 @@
                         @include('components.sortable-column', ['label' => 'Color', 'field' => 'color'])
                         @include('components.sortable-column', ['label' => 'Price', 'field' => 'price'])
                         @include('components.sortable-column', ['label' => 'Price with tax', 'field' => 'price'])
+                        @include('components.column', ['label' => 'Inventory'])
                     </tr>
                 </thead>
                 <tbody>
@@ -44,6 +57,7 @@
                             <td>{{ $part->color }}</td>
                             <td>{{ $part->price }}</td>
                             <td>{{ $part->priceWithTax }}</td>
+                            <td> @include('components.inventory-form', ['part' => $part]) </td>
                         </tr>
                     </a>
                     @endforeach
