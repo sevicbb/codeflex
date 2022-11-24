@@ -25,5 +25,7 @@ class DatabaseSeeder extends Seeder
         $this->call(WarehouseSeeder::class);
         $this->call(PartSeeder::class);
         $this->call(WarehousePartSeeder::class);
+
+        $this->call(CurrencySeeder::class);
     }
 }

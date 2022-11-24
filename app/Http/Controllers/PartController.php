@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\UpdateCurrencyRequest;
 use App\Http\Requests\UpdateInventoryRequest;
 use App\Http\Requests\UpdateTaxRequest;
 use App\Http\Requests\UpdateWarehouseRequest;
@@ -61,6 +62,15 @@ class PartController extends Controller
         )->update(
             ['inventory' => $data['inventory']]
         );
+
+        return redirect()->route('part.index');
+    }
+
+    public function updateCurrency(UpdateCurrencyRequest $request)
+    {
+        $data = $request->validated();
+
+        Setting::set('currency.id', $data['currency']);
 
         return redirect()->route('part.index');
     }

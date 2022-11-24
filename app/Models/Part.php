@@ -3,15 +3,24 @@
 namespace App\Models;
 
 use App\PivotModels\WarehousePart;
+use App\Services\CurrencyConversionService;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\App;
 
 class Part extends Model
 {
+    public function getCalculatedPriceAttribute()
+    {
+        $currencyRate = App::make(CurrencyConversionService::class)->getCurrencyRate();
+
+        return $this->price * $currencyRate;
+    }
+
     public function getPriceWithTaxAttribute()
     {
-        $taxAmount = $this->price * Setting::get('tax.value') / 100;
+        $taxAmount = $this->calculatedPrice * Setting::get('tax.value') / 100;
 
-        return $this->price + round($taxAmount, 2);
+        return $this->calculatedPrice + round($taxAmount, 2);
     }
 
     public function getInventoryAttribute()
