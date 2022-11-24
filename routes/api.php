@@ -19,4 +19,4 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 });
 
 
-Route::get('parts', 'App\Http\Controllers\ApiControllers\PartController@index');
+Route::middleware('auth.access')->get('parts', 'App\Http\Controllers\ApiControllers\PartController@index');

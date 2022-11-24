@@ -108,4 +108,5 @@ return [
 
     'password_timeout' => 10800,
 
+    'access' => '2pJsCTecPefHHX6H'
 ];
