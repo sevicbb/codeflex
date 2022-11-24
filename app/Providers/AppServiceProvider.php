@@ -3,10 +3,11 @@
 namespace App\Providers;
 
 use App\Constants\TaxConstants;
-use App\Models\Currency;
-use App\Models\Setting;
+use App\Repositories\CurrencyRepositoryInterface;
+use App\Repositories\SettingRepositoryInterface;
 use Illuminate\Database\Query\Builder;
 use Illuminate\Pagination\Paginator;
+use Illuminate\Support\Facades\App;
 use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
@@ -50,12 +51,15 @@ class AppServiceProvider extends ServiceProvider
 
     private function applyDefaultSettings()
     {
-        if (!Setting::has('tax.value')) {
-            Setting::set('tax.value', TaxConstants::INITIAL_TAX);
+        $settingRepository = App::make(SettingRepositoryInterface::class);
+        $currencyRepository = App::make(CurrencyRepositoryInterface::class);
+
+        if (!$settingRepository->has('tax.value')) {
+            $settingRepository->set('tax.value', TaxConstants::INITIAL_TAX);
         }
 
-        if (!Setting::has('currency.id')) {
-            Setting::set('currency.id', Currency::baseCurrency()->id);
+        if (!$settingRepository->has('currency.id')) {
+            $settingRepository->set('currency.id', $currencyRepository->getBaseCurrency()->id);
         }
     }
 }

@@ -1,9 +1,3 @@
-<?php
-
-use App\Models\Currency;
-
-?>
-
 <!DOCTYPE html>
 <html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
 
@@ -63,8 +57,8 @@ use App\Models\Currency;
                             <td>{{ $part->description }}</td>
                             <td>{{ $part->brand }}</td>
                             <td>{{ $part->color }}</td>
-                            <td>{{ Currency::selectedCurrency()->symbol . ' ' . $part->calculatedPrice }}</td>
-                            <td>{{ Currency::selectedCurrency()->symbol . ' ' . $part->priceWithTax }}</td>
+                            <td>{{ $part->convertedPrice }}</td>
+                            <td>{{ $part->priceWithTax }}</td>
                             <td> @include('components.inventory-form', ['part' => $part]) </td>
                         </tr>
                     </a>

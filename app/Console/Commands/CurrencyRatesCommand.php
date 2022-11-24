@@ -3,8 +3,8 @@
 namespace App\Console\Commands;
 
 use App\Constants\CurrencyConstants;
-use App\Models\Currency;
-use App\Models\CurrencyRate;
+use App\Repositories\CurrencyRateRepositoryInterface;
+use App\Repositories\CurrencyRepositoryInterface;
 use App\Services\CurrencyConversionService;
 use Illuminate\Console\Command;
 
@@ -37,9 +37,14 @@ class CurrencyRatesCommand extends Command
      */
     protected $errors = [];
 
-    public function __construct()
-    {
-        $this->currencyConversionService = new CurrencyConversionService();
+    public function __construct(
+        CurrencyRepositoryInterface $currencyRepository,
+        CurrencyRateRepositoryInterface $currencyRateRepository,
+        CurrencyConversionService $currencyConversionService
+    ) {
+        $this->currencyRepository = $currencyRepository;
+        $this->currencyRateRepository = $currencyRateRepository;
+        $this->currencyConversionService = $currencyConversionService;
 
         parent::__construct();
     }
@@ -51,17 +56,21 @@ class CurrencyRatesCommand extends Command
      */
     public function handle()
     {
-        $currencies = Currency::all()->filter(fn ($currency) => $currency->code !== CurrencyConstants::BASE_CURRENCY);
+        $currencies = $this->currencyRepository->allWhereNot('code', CurrencyConstants::BASE_CURRENCY);
 
-        CurrencyRate::query()->delete();
+        $this->currencyRateRepository->deleteAll();
+
+        $currencyRates = [];
 
         foreach ($currencies as $currency) {
-            CurrencyRate::create([
+            $currencyRates[] = [
                 'from_currency' => CurrencyConstants::BASE_CURRENCY,
                 'to_currency' => $currency->code,
                 'rate' => $this->currencyConversionService->fetchCurrencyRate($currency->code),
                 'date' => now()
-            ]);
+            ];
         }
+
+        $this->currencyRateRepository->insert($currencyRates);
     }
 }

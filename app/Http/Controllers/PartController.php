@@ -7,12 +7,26 @@ use App\Http\Requests\UpdateInventoryRequest;
 use App\Http\Requests\UpdateTaxRequest;
 use App\Http\Requests\UpdateWarehouseRequest;
 use App\Models\Part;
-use App\Models\Setting;
-use App\PivotModels\WarehousePart;
+use App\Repositories\CurrencyRepositoryInterface;
+use App\Repositories\PartRepositoryInterface;
+use App\Repositories\SettingRepositoryInterface;
+use App\Repositories\WarehousePartRepositoryInterface;
 use Illuminate\Http\Request;
 
 class PartController extends Controller
 {
+    public function __construct(
+        PartRepositoryInterface $partRepository,
+        SettingRepositoryInterface $settingRepository,
+        CurrencyRepositoryInterface $currencyRepository,
+        WarehousePartRepositoryInterface $warehousePartRepository
+    ) {
+        $this->partRepository = $partRepository;
+        $this->settingRepository = $settingRepository;
+        $this->currencyRepository = $currencyRepository;
+        $this->warehousePartRepository = $warehousePartRepository;
+    }
+
     public function index(Request $request)
     {
         $partsBuilder = Part::distinct();
@@ -36,7 +50,7 @@ class PartController extends Controller
     {
         $data = $request->validated();
 
-        Setting::set('tax.value', $data['tax']);
+        $this->settingRepository->set('tax.value', $data['tax']);
 
         return redirect()->route('part.index');
     }
@@ -45,7 +59,7 @@ class PartController extends Controller
     {
         $data = $request->validated();
 
-        Setting::set('warehouse.id', $data['warehouse']);
+        $this->settingRepository->set('warehouse.id', $data['warehouse']);
 
         return redirect()->route('part.index');
     }
@@ -54,13 +68,14 @@ class PartController extends Controller
     {
         $data = $request->all();
 
-        WarehousePart::where(
+        $this->warehousePartRepository->updateWhereConditions(
             [
                 'part_id' => $data['part_id'],
                 'warehouse_id' => $data['warehouse_id']
+            ],
+            [
+                'inventory' => $data['inventory']
             ]
-        )->update(
-            ['inventory' => $data['inventory']]
         );
 
         return redirect()->route('part.index');
@@ -70,7 +85,7 @@ class PartController extends Controller
     {
         $data = $request->validated();
 
-        Setting::set('currency.id', $data['currency']);
+        $this->settingRepository->set('currency.id', $data['currency']);
 
         return redirect()->route('part.index');
     }
